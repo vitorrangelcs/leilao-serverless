@@ -16,7 +16,7 @@ async function createAuction(event, context) {
   };
   //significa o seguinte, o await, "Espere esse código ser rodado" e ao final temos uma promisse que é promessa
   await dynamodb.put({
-    TableName: 'AuctionsTable',
+    TableName: process.env.AUCTIONS_TABLE_NAME,
     Item: auction,
   }).promise();
 
