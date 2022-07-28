@@ -1,9 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import AWS from 'aws-sdk';
-import middy from '@middy/core';
-import httpJsonBodyParser from '@middy/http-json-body-parser';
-import httpEventNormalizer from '@middy/http-event-normalizer';
-import httpErrorHandler from '@middy/http-error-handler';
+import commonMiddleware from './lib/commonMiddleware';
 import createError from 'http-errors';
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
@@ -18,6 +15,9 @@ async function createAuction(event, context) {
     title,
     status: "OPEN",
     createAt: now.toISOString(),
+    hisghestBid:{
+      amount:0,
+    }
   };
   //significa o seguinte, o await, "Espere esse código ser rodado" e ao final temos uma promisse que é promessa
   try{
@@ -35,10 +35,4 @@ async function createAuction(event, context) {
   };
 }
 
-export const handler = middy(createAuction)
-                      //O analisador de corpo passara automaticamente pelo nosso corpo,tornando o codigo mais limpo, com ele removemos do const title= JSON.parse(event.body), tiramos o json.parse
-                      .use(httpJsonBodyParser())
-                      //ajustara automaticamente os objetos. evitando objetos inexistentes
-                      .use(httpEventNormalizer())
-                      //nos ajuda na manipulaç~ao de erros
-                      .use(httpErrorHandler());
+export const handler = commonMiddleware(createAuction);
