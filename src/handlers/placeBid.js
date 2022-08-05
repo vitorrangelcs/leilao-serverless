@@ -11,6 +11,10 @@ async function placeBid(event, context) {
 
   const auction = await getAuctionById(id);
 
+  if(auction.status !== 'OPEN'){
+    throw new createError.Forbidden("Leilão fechado, você não pode dar lances.");
+  }
+
   if(amount <= auction.hisghestBid.amount){
     throw new createError.Forbidden(`Seu lance precisa ser maior que o anterior que é de ${auction.hisghestBid.amount}.`);
   }
